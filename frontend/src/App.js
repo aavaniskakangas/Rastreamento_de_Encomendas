@@ -6,32 +6,32 @@ function App() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Form states
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showLocationForm, setShowLocationForm] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [showLocationHistory, setShowLocationHistory] = useState(false);
-  
+
   // Form states
   const [createForm, setCreateForm] = useState({
     shipping_date: '',
     status: 'Pending',
     destination: '',
-    weight: ''
+    weight: '',
   });
-  
+
   const [editForm, setEditForm] = useState({
     shipping_date: '',
     status: '',
     destination: '',
-    weight: ''
+    weight: '',
   });
-  
+
   const [locationForm, setLocationForm] = useState({
     location: '',
-    registration_date: ''
+    registration_date: '',
   });
 
   // Fetch all packages
@@ -58,7 +58,12 @@ function App() {
     try {
       const response = await axios.post('/packages/', createForm);
       setPackages([...packages, response.data]);
-      setCreateForm({ shipping_date: '', status: 'Pending', destination: '', weight: '' });
+      setCreateForm({
+        shipping_date: '',
+        status: 'Pending',
+        destination: '',
+        weight: '',
+      });
       setShowCreateForm(false);
       setError(null);
     } catch (err) {
@@ -70,10 +75,15 @@ function App() {
   const handleUpdatePackage = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`/packages/${selectedPackage.id}`, editForm);
-      setPackages(packages.map(pkg => 
-        pkg.id === selectedPackage.id ? response.data : pkg
-      ));
+      const response = await axios.put(
+        `/packages/${selectedPackage.id}`,
+        editForm,
+      );
+      setPackages(
+        packages.map((pkg) =>
+          pkg.id === selectedPackage.id ? response.data : pkg,
+        ),
+      );
       setShowEditForm(false);
       setSelectedPackage(null);
       setError(null);
@@ -87,7 +97,7 @@ function App() {
     if (window.confirm('Are you sure you want to delete this package?')) {
       try {
         await axios.delete(`/packages/${id}`);
-        setPackages(packages.filter(pkg => pkg.id !== id));
+        setPackages(packages.filter((pkg) => pkg.id !== id));
         setError(null);
       } catch (err) {
         setError('Error deleting package: ' + err.message);
@@ -99,7 +109,10 @@ function App() {
   const handleAddLocation = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`/packages/${selectedPackage.id}/location`, locationForm);
+      await axios.post(
+        `/packages/${selectedPackage.id}/location`,
+        locationForm,
+      );
       setLocationForm({ location: '', registration_date: '' });
       setShowLocationForm(false);
       setError(null);
@@ -115,7 +128,9 @@ function App() {
   const [locationHistory, setLocationHistory] = useState([]);
   const fetchLocationHistory = async (packageId) => {
     try {
-      const response = await axios.get(`/packages/${packageId}/location_history`);
+      const response = await axios.get(
+        `/packages/${packageId}/location_history`,
+      );
       setLocationHistory(response.data);
       setShowLocationHistory(true);
       setError(null);
@@ -138,7 +153,7 @@ function App() {
       shipping_date: package_item.shipping_date,
       status: package_item.status,
       destination: package_item.destination,
-      weight: package_item.weight.toString()
+      weight: package_item.weight.toString(),
     });
     setShowEditForm(true);
   };
@@ -148,7 +163,7 @@ function App() {
     setSelectedPackage(package_item);
     setLocationForm({
       location: '',
-      registration_date: new Date().toISOString().split('T')[0]
+      registration_date: new Date().toISOString().split('T')[0],
     });
     setShowLocationForm(true);
   };
@@ -161,11 +176,16 @@ function App() {
   // Get CSS class for status
   const getStatusClass = (status) => {
     switch (status.toLowerCase()) {
-      case 'pending': return 'status-pending';
-      case 'delivered': return 'status-delivered';
-      case 'in transit': return 'status-transit';
-      case 'returned': return 'status-returned';
-      default: return '';
+      case 'pending':
+        return 'status-pending';
+      case 'delivered':
+        return 'status-delivered';
+      case 'in transit':
+        return 'status-transit';
+      case 'returned':
+        return 'status-returned';
+      default:
+        return '';
     }
   };
 
@@ -194,18 +214,27 @@ function App() {
       </div>
 
       {error && (
-        <div className="section" style={{ backgroundColor: '#f8d7da', border: '1px solid #f5c6cb' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          className="section"
+          style={{ backgroundColor: '#f8d7da', border: '1px solid #f5c6cb' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <p style={{ color: '#721c24', margin: 0 }}>{error}</p>
-            <button 
-              onClick={clearError} 
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: '#721c24', 
-                fontSize: '18px', 
+            <button
+              onClick={clearError}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#721c24',
+                fontSize: '18px',
                 cursor: 'pointer',
-                padding: '0 8px'
+                padding: '0 8px',
               }}
             >
               ✕
@@ -229,7 +258,12 @@ function App() {
                 <input
                   type="date"
                   value={createForm.shipping_date}
-                  onChange={(e) => setCreateForm({...createForm, shipping_date: e.target.value})}
+                  onChange={(e) =>
+                    setCreateForm({
+                      ...createForm,
+                      shipping_date: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -237,7 +271,9 @@ function App() {
                 <label>Status:</label>
                 <select
                   value={createForm.status}
-                  onChange={(e) => setCreateForm({...createForm, status: e.target.value})}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, status: e.target.value })
+                  }
                   required
                 >
                   <option value="Pending">Pending</option>
@@ -251,7 +287,12 @@ function App() {
                 <input
                   type="text"
                   value={createForm.destination}
-                  onChange={(e) => setCreateForm({...createForm, destination: e.target.value})}
+                  onChange={(e) =>
+                    setCreateForm({
+                      ...createForm,
+                      destination: e.target.value,
+                    })
+                  }
                   placeholder="Destination address"
                   required
                 />
@@ -262,15 +303,23 @@ function App() {
                   type="number"
                   step="0.01"
                   value={createForm.weight}
-                  onChange={(e) => setCreateForm({...createForm, weight: e.target.value})}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, weight: e.target.value })
+                  }
                   placeholder="0.00"
                   required
                 />
               </div>
             </div>
             <div className="actions">
-              <button type="submit" className="btn btn-success">Create Package</button>
-              <button type="button" className="btn btn-danger" onClick={() => setShowCreateForm(false)}>
+              <button type="submit" className="btn btn-success">
+                Create Package
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => setShowCreateForm(false)}
+              >
                 Cancel
               </button>
             </div>
@@ -284,17 +333,21 @@ function App() {
         {packages.length === 0 ? (
           <p>No packages found.</p>
         ) : (
-          packages.map(package_item => (
+          packages.map((package_item) => (
             <div key={package_item.id} className="package-card">
               <h3>Package #{package_item.id}</h3>
               <div className="package-info">
                 <div className="info-item">
                   <div className="info-label">Shipping Date</div>
-                  <div className="info-value">{formatDate(package_item.shipping_date)}</div>
+                  <div className="info-value">
+                    {formatDate(package_item.shipping_date)}
+                  </div>
                 </div>
                 <div className="info-item">
                   <div className="info-label">Status</div>
-                  <div className={`info-value ${getStatusClass(package_item.status)}`}>
+                  <div
+                    className={`info-value ${getStatusClass(package_item.status)}`}
+                  >
                     {package_item.status}
                   </div>
                 </div>
@@ -308,26 +361,26 @@ function App() {
                 </div>
               </div>
               <div className="actions">
-                <button 
-                  className="btn" 
+                <button
+                  className="btn"
                   onClick={() => openEditForm(package_item)}
                 >
                   ✏️ Edit
                 </button>
-                <button 
-                  className="btn btn-success" 
+                <button
+                  className="btn btn-success"
                   onClick={() => openLocationForm(package_item)}
                 >
                   📍 Add Location
                 </button>
-                <button 
-                  className="btn" 
+                <button
+                  className="btn"
                   onClick={() => fetchLocationHistory(package_item.id)}
                 >
                   🗺️ View History
                 </button>
-                <button 
-                  className="btn btn-danger" 
+                <button
+                  className="btn btn-danger"
                   onClick={() => handleDeletePackage(package_item.id)}
                 >
                   🗑️ Delete
@@ -340,7 +393,10 @@ function App() {
 
       {/* Edit Modal */}
       {showEditForm && selectedPackage && (
-        <div className="section" style={{ backgroundColor: '#fff3cd', border: '1px solid #ffeaa7' }}>
+        <div
+          className="section"
+          style={{ backgroundColor: '#fff3cd', border: '1px solid #ffeaa7' }}
+        >
           <h2>✏️ Edit Package #{selectedPackage.id}</h2>
           <form onSubmit={handleUpdatePackage}>
             <div className="form-row">
@@ -349,7 +405,9 @@ function App() {
                 <input
                   type="date"
                   value={editForm.shipping_date}
-                  onChange={(e) => setEditForm({...editForm, shipping_date: e.target.value})}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, shipping_date: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -357,7 +415,9 @@ function App() {
                 <label>Status:</label>
                 <select
                   value={editForm.status}
-                  onChange={(e) => setEditForm({...editForm, status: e.target.value})}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, status: e.target.value })
+                  }
                   required
                 >
                   <option value="Pending">Pending</option>
@@ -371,7 +431,9 @@ function App() {
                 <input
                   type="text"
                   value={editForm.destination}
-                  onChange={(e) => setEditForm({...editForm, destination: e.target.value})}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, destination: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -381,14 +443,22 @@ function App() {
                   type="number"
                   step="0.01"
                   value={editForm.weight}
-                  onChange={(e) => setEditForm({...editForm, weight: e.target.value})}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, weight: e.target.value })
+                  }
                   required
                 />
               </div>
             </div>
             <div className="actions">
-              <button type="submit" className="btn btn-success">Update Package</button>
-              <button type="button" className="btn btn-danger" onClick={() => setShowEditForm(false)}>
+              <button type="submit" className="btn btn-success">
+                Update Package
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => setShowEditForm(false)}
+              >
                 Cancel
               </button>
             </div>
@@ -398,7 +468,10 @@ function App() {
 
       {/* Add Location Modal */}
       {showLocationForm && selectedPackage && (
-        <div className="section" style={{ backgroundColor: '#d1ecf1', border: '1px solid #bee5eb' }}>
+        <div
+          className="section"
+          style={{ backgroundColor: '#d1ecf1', border: '1px solid #bee5eb' }}
+        >
           <h2>📍 Add Location - Package #{selectedPackage.id}</h2>
           <form onSubmit={handleAddLocation}>
             <div className="form-row">
@@ -407,7 +480,12 @@ function App() {
                 <input
                   type="text"
                   value={locationForm.location}
-                  onChange={(e) => setLocationForm({...locationForm, location: e.target.value})}
+                  onChange={(e) =>
+                    setLocationForm({
+                      ...locationForm,
+                      location: e.target.value,
+                    })
+                  }
                   placeholder="Ex: São Paulo Distribution Center"
                   required
                 />
@@ -417,14 +495,25 @@ function App() {
                 <input
                   type="date"
                   value={locationForm.registration_date}
-                  onChange={(e) => setLocationForm({...locationForm, registration_date: e.target.value})}
+                  onChange={(e) =>
+                    setLocationForm({
+                      ...locationForm,
+                      registration_date: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
             </div>
             <div className="actions">
-              <button type="submit" className="btn btn-success">Add Location</button>
-              <button type="button" className="btn btn-danger" onClick={() => setShowLocationForm(false)}>
+              <button type="submit" className="btn btn-success">
+                Add Location
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => setShowLocationForm(false)}
+              >
                 Cancel
               </button>
             </div>
@@ -434,20 +523,25 @@ function App() {
 
       {/* Location History */}
       {showLocationHistory && (
-        <div className="section" style={{ backgroundColor: '#e8f5e8', border: '1px solid #c3e6c3' }}>
+        <div
+          className="section"
+          style={{ backgroundColor: '#e8f5e8', border: '1px solid #c3e6c3' }}
+        >
           <h2>🗺️ Location History</h2>
           {locationHistory.length === 0 ? (
             <p>No locations registered for this package.</p>
           ) : (
-            locationHistory.map(location => (
+            locationHistory.map((location) => (
               <div key={location.id} className="location-item">
                 <strong>{location.location}</strong>
-                <div className="data">{formatDate(location.registration_date)}</div>
+                <div className="data">
+                  {formatDate(location.registration_date)}
+                </div>
               </div>
             ))
           )}
-          <button 
-            className="btn" 
+          <button
+            className="btn"
             onClick={() => setShowLocationHistory(false)}
             style={{ marginTop: '15px' }}
           >
